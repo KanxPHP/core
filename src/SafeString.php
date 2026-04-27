@@ -5,7 +5,9 @@ use KanxPHP\Core\Exceptions\IntegrityException;
 
 class SafeString 
 {
-    /** Securely hashes passwords using Argon2id */
+    /** 
+     * Securely hashes passwords using Argon2id 
+     */
     public static function hash(string $password): string 
     {
         $hash = password_hash($password, PASSWORD_ARGON2ID);
@@ -15,7 +17,19 @@ class SafeString
         return $hash;
     }
 
-    /** Multi-byte safe string truncation */
+    /** 
+     * Verifies a password against a hash
+     * Gateway: Simple true/false return.
+     * Value-Add: Timing-attack safe by default via native password_verify.
+     */
+    public static function verify(string $password, string $hash): bool 
+    {
+        return password_verify($password, $hash);
+    }
+
+    /** 
+     * Multi-byte safe string truncation 
+     */
     public static function limit(string $value, int $limit = 100): string 
     {
         if (mb_strwidth($value, 'UTF-8') <= $limit) {

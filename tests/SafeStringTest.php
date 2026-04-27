@@ -20,4 +20,13 @@ class SafeStringTest extends TestCase
         $this->assertIsString($hash);
         $this->assertTrue(password_verify($pass, $hash));
     }
+
+    public function testVerifyReturnsTrueOnMatch() 
+    {
+        $pass = "kanx-password";
+        $hash = SafeString::hash($pass);
+        
+        $this->assertTrue(SafeString::verify($pass, $hash));
+        $this->assertFalse(SafeString::verify("wrong-password", $hash));
+    }
 }
