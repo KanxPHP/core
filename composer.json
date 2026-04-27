@@ -1,0 +1,38 @@
+{
+    "name": "kanxphp/core",
+    "description": "Secure, future-proofed PHP wrappers for Data Integrity and Security.",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "KanxPHP Team"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "php": ">=7.4",
+        "ext-mbstring": "*",
+        "ext-json": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "KanxPHP\\Core\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "KanxPHP\\Core\\Tests\\": "tests/"
+        }
+    },
+    "keywords": [
+        "php",
+        "security",
+        "integrity",
+        "polyfill",
+        "safe-php"
+    ],
+    "support": {
+        "issues": "https://github.com",
+        "source": "https://github.com"
+    }
+}
