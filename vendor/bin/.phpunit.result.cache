@@ -1,0 +1,1 @@
+{"version":1,"defects":[],"times":{"KanxPHP\\Core\\Tests\\SafeStringTest::testLimitTruncatesLongString":0.135,"KanxPHP\\Core\\Tests\\SafeStringTest::testHashReturnsValidVerifyableString":2.014}}
