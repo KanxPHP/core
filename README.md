@@ -46,14 +46,41 @@ try {
 }
 ```
 
+### High-Integrity Hashing & Verification
+Stop worrying about algorithm drift. `SafeString::hash` defaults to **Argon2id** (the industry gold standard) and throws an exception on failure. Pair it with `verify()` for a consistent security API.
+
+```php
+use KanxPHP\Core\SafeString;
+use KanxPHP\Core\Exceptions\IntegrityException;
+
+// 1. Hashing a password (e.g., during registration)
+try {
+    $hashedPassword = SafeString::hash('user-secret-password');
+} catch (IntegrityException $e) {
+    // Handle secure generation failure
+}
+
+// 2. Verifying a password (e.g., during login)
+$userInput = 'user-secret-password';
+
+if (SafeString::verify($userInput, $hashedPassword)) {
+    // Login successful
+} else {
+    // Invalid credentials
+}
+```
+
 ### Strict JSON Parsing
-Native `json_decode` returns `null` on failure. `SafeJSON` ensures you never proceed with corrupted data.
+Native `json_decode` returns `null` on failure. `SafeJSON` ensures you never proceed with corrupted data by throwing a strict `IntegrityException`.
 
 ```php
 use KanxPHP\Core\SafeJSON;
 
-// Throws IntegrityException on syntax errors instead of returning null
+// Returns an associative array or throws IntegrityException
 $data = SafeJSON::parse($jsonString); 
+
+// Encodes data safely with forced UTF-8 and Unescaped Slashes
+$json = SafeJSON::encode(['status' => 'secure', 'link' => 'https://kanxphp.com']);
 ```
 
 ---
