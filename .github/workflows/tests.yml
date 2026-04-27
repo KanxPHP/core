@@ -26,7 +26,7 @@ jobs:
           coverage: none
 
       - name: Install Dependencies
-        run: composer install --prefer-dist --no-progress
+        run: composer update --prefer-dist --no-progress --no-interaction
 
       - name: Execute Tests
         run: vendor/bin/phpunit tests
