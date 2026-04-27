@@ -1,6 +1,6 @@
 # 🛡️ KanxPHP Core
 
-![Tests](https://github.com)
+![Tests](https://shields.io/badge/Tests-6-blue?style=for-the-badge)
 ![License](https://shields.io/badge/Synchronised-2026-02-01-blue?style=for-the-badge)
 ![PHP Version](https://shields.io/badge/Synchronised-2026-02-01-blue?style=for-the-badge)
 
