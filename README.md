@@ -1,8 +1,8 @@
 # 🛡️ KanxPHP Core
 
 ![Tests](https://github.com)
-![License](https://shields.io)
-![PHP Version](https://shields.io)
+![License](https://shields.io/badge/Synchronised-2026-02-01-blue?style=for-the-badge)
+![PHP Version](https://shields.io/badge/Synchronised-2026-02-01-blue?style=for-the-badge)
 
 **Future-proofed PHP security wrappers and data integrity tools.**
 
