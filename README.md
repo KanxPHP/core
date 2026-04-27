@@ -94,7 +94,7 @@ KanxPHP is a community-driven project. We prioritize development based on **Spon
 * [ ] **Webhook Guard**: Unified signature verification for Stripe/GitHub.
 * [ ] **SQL Last-Stand**: Outbound query monitoring for injection patterns.
 
-[**Cast your vote on the Roadmap Discussions →**](https://github.com)
+[**Cast your vote on the Roadmap Discussions →**](https://github.com/KanxPHP/core/discussions/1)
 
 ---
 
@@ -107,7 +107,7 @@ Maintaining security tools requires constant updates to bridge new PHP versions 
 * **🚀 Startup ($49/mo):** Your logo on the README + early access to private security modules.
 * **🏛️ Enterprise ($199/mo):** Direct priority support and custom security wrapper requests.
 
-[**Become a Sponsor on GitHub**](https://github.com)
+[**Become a Sponsor on GitHub**](https://github.com/sponsors/KanxPHP)
 
 ---
 
