@@ -1,8 +1,8 @@
 # 🛡️ KanxPHP Core
 
-![https://github.com/KanxPHP/core/tree/main/tests](https://shields.io/badge/Tests:--YES-blue?style=for-the-badge)
-![https://github.com/KanxPHP/core/blob/main/LICENSE](https://shields.io/badge/License:--MIT-green?style=for-the-badge)
-![](https://shields.io/badge/PHP:-->=7.4-blue?style=for-the-badge)
+!(https://shields.io/badge/Tests:--YES-blue?style=for-the-badge)
+!(https://shields.io/badge/License:--MIT-green?style=for-the-badge)
+!(https://shields.io/badge/PHP:-->=7.4-blue?style=for-the-badge)
 
 **Future-proofed PHP security wrappers and data integrity tools.**
 
