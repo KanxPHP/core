@@ -3,6 +3,7 @@
 namespace KanxPHP\Core;
 
 use KanxPHP\Core\Config;
+use KanxPHP\Core\SafeProxy;
 
 class SafeCurl 
 {
@@ -20,6 +21,17 @@ class SafeCurl
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
+
+        $proxy = SafeProxy::get();
+
+        if ($proxy) {
+            curl_setopt($ch, CURLOPT_PROXY, $proxy);
+            if (str_contains($proxy, '@')) {
+                curl_setopt($ch, CURLOPT_PROXYUSERPWD, explode('@', $proxy)[0]);
+                curl_setopt($ch, CURLOPT_PROXY, explode('@', $proxy)[1]);
+            }
+        }
+
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($ch, CURLOPT_MAXREDIRS, 3);
