@@ -6,12 +6,14 @@ use KanxPHP\Core\Config;
 
 class SafeCurl 
 {
+    // A modern, high-trust User-Agent (Chrome on Windows 11)
+    private const DEFAULT_UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Kanx/1.0';
+
     /**
      * Executes a secure GET request to fetch headers or content.
      * Prevents access to internal/private IP ranges.
      */
-    public static function fetch(string $url, bool $headersOnly = true) 
-    {
+    public static function fetch(string $url, bool $headersOnly = true) {
         if (!self::isSafeUrl($url)) {
             return false;
         }
@@ -20,29 +22,30 @@ class SafeCurl
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-        curl_setopt($ch, CURLOPT_MAXREDIRS, 3); // Prevent redirect loops
-        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
-        curl_setopt($ch, CURLOPT_HEADER, $headersOnly);
+        curl_setopt($ch, CURLOPT_MAXREDIRS, 3);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 15);
         
-        if ($headersOnly) {
-            curl_setopt($ch, CURLOPT_NOBODY, true);
-        }
+        // --- RAD SECURITY & COMPATIBILITY SETTINGS ---
+        
+        // 1. Set the User-Agent to bypass "Bot Blocks"
+        curl_setopt($ch, CURLOPT_USERAGENT, self::DEFAULT_UA);
 
+        // 2. Windows/XAMPP SSL Fix (from previous step)
         if (Config::isWindows()) {
             curl_setopt($ch, CURLOPT_SSL_OPTIONS, CURLSSLOPT_NATIVE_CA);
         }
 
-        $response = curl_exec($ch);
-        $info = curl_getinfo($ch);
-        curl_close($ch);
-
-        if ($headersOnly && $response) {
-            return self::parseHeaders($response);
+        if ($headersOnly) {
+            curl_setopt($ch, CURLOPT_HEADER, true);
+            curl_setopt($ch, CURLOPT_NOBODY, true);
         }
 
-        return $response;
-    }
+        $response = curl_exec($ch);
+        curl_close($ch);
 
+        return ($headersOnly && $response) ? self::parseHeaders($response) : $response;
+    }
+    
     /**
      * Validates that the URL is public and not a private/local IP.
      */
