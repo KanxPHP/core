@@ -1,116 +1,71 @@
-# 🛡️ KanxPHP Core
+# KanxPHP Core
 
-![](https://shields.io/badge/Tests:--YES-blue?style=for-the-badge)
-![](https://shields.io/badge/License:--MIT-green?style=for-the-badge)
-![](https://shields.io/badge/PHP:-->=7.4-blue?style=for-the-badge)
+**The "Fortress in a Box" for Rapid API Development.**
 
-**Future-proofed PHP security wrappers and data integrity tools.**
+KanxPHP is a security-first, high-performance PHP framework designed for one thing: **launching profitable, stateless micro-app APIs in seconds.** 
 
-PHP's native functions are powerful but often fail silently or use insecure defaults. **KanxPHP Core** provides a high-integrity abstraction layer that forces secure algorithms, handles errors via exceptions, and ensures your application remains compatible across PHP 7.4 through 8.3+.
+Stop writing boilerplate for headers, security, and JSON handling. KanxPHP provides the hardened infrastructure (`SafeCurl`, `SqlGuard`, `SafeJSON`) so you can focus on building the logic that generates passive income on marketplaces like RapidAPI.
 
 ---
 
-## 🚀 Installation
+## ⚡ RAD (Rapid Application Development) in Action
+**From Concept to Market in 60 Seconds.**
 
-Install the core suite via [Composer](https://getcomposer.org):
+KanxPHP enables "Kit-based" development. Instead of building one API at a time, you scaffold entire professional suites.
 
+### Example: The "Web Scan Kit" 🚀
+This kit was built using KanxPHP RAD principles and is ready for production deployment. It bundles four high-value tools into a single endpoint:
+
+1.  **Auditor Controller:** Security header & SEO health analysis.
+2.  **SSL Checker:** Real-time certificate expiry & issuer verification.
+3.  **Robots Parser:** Directives analysis for SEO and AI-scraper protection.
+4.  **DNS Lookup:** High-speed resolution for A, MX, TXT, and CNAME records.
+
+**How it was built:**
 ```bash
-composer require kanxphp/core
+# 1. Scaffold the entire niche infrastructure
+php kanx-cli build:kit web-scan
+
+# 2. Generate the specialized logic controllers
+php kanx-cli make:controller Auditor
+php kanx-cli make:controller SslCheck
+php kanx-cli make:controller Robots
+php kanx-cli make:controller Dns
+
+# 3. Deploy to RapidAPI
+# Done.
 ```
 
 ---
 
-## 🛠️ Usage
+## 🗳️ Sponsor-Driven Roadmap
+We build what the market demands. Sponsors get to vote on which **Kanx-Kit** or specific micro-app we develop next. 
 
-### Safe String Truncation
-Native `substr` or `mb_substr` can be tricky with encoding. `SafeString::limit` handles multi-byte characters and "magic" widths safely.
+### Current Voting Niche: **Security & Validation ("Kanx-Scan")**
+*Sponsors are currently prioritizing these upcoming tools:*
 
-```php
-use KanxPHP\Core\SafeString;
-
-// Returns "This is a..."
-echo SafeString::limit("This is a very long string", 10); 
-```
-
-### High-Integrity Hashing
-Stop worrying about which algorithm is currently "best." `SafeString::hash` defaults to **Argon2id** (the industry gold standard) and throws an exception if the server fails to generate a secure result.
-
-```php
-use KanxPHP\Core\SafeString;
-use KanxPHP\Core\Exceptions\IntegrityException;
-
-try {
-    $hash = SafeString::hash('user-password-123');
-} catch (IntegrityException $e) {
-    // Handle security failure (e.g., log it and alert admin)
-}
-```
-
-### High-Integrity Hashing & Verification
-Stop worrying about algorithm drift. `SafeString::hash` defaults to **Argon2id** (the industry gold standard) and throws an exception on failure. Pair it with `verify()` for a consistent security API.
-
-```php
-use KanxPHP\Core\SafeString;
-use KanxPHP\Core\Exceptions\IntegrityException;
-
-// 1. Hashing a password (e.g., during registration)
-try {
-    $hashedPassword = SafeString::hash('user-secret-password');
-} catch (IntegrityException $e) {
-    // Handle secure generation failure
-}
-
-// 2. Verifying a password (e.g., during login)
-$userInput = 'user-secret-password';
-
-if (SafeString::verify($userInput, $hashedPassword)) {
-    // Login successful
-} else {
-    // Invalid credentials
-}
-```
-
-### Strict JSON Parsing
-Native `json_decode` returns `null` on failure. `SafeJSON` ensures you never proceed with corrupted data by throwing a strict `IntegrityException`.
-
-```php
-use KanxPHP\Core\SafeJSON;
-
-// Returns an associative array or throws IntegrityException
-$data = SafeJSON::parse($jsonString); 
-
-// Encodes data safely with forced UTF-8 and Unescaped Slashes
-$json = SafeJSON::encode(['status' => 'secure', 'link' => 'https://kanxphp.com']);
-```
+*   **JWT Debugger:** Decodes and validates JWT tokens for integrity.
+*   **Password Pwned Checker:** Compares hashes against known data breach APIs.
+*   **VAT Number Validator:** Checks EU VAT IDs via SOAP/CURL.
+*   **IBAN Validator:** Validates bank account numbers via Modulo 97.
+*   **Disposable Email Filter:** Detects 5,000+ burner email domains.
+*   **XSS Deep-Cleaner:** Strips malicious scripts using `DOMDocument`.
+*   **SQLi Threat Scorer:** Analyzes strings for injection patterns via `SqlGuard`.
+*   **IPv6/IPv4 Range Checker:** Determines CIDR block membership.
+*   **Password Entropy Meter:** Calculates true bit-strength.
+*   **HoneyPot Link Generator:** Traps and identifies malicious scrapers.
 
 ---
 
-## 🗳️ Roadmap Democracy
-
-KanxPHP is a community-driven project. We prioritize development based on **Sponsor Votes**. 
-
-**Current Modules under development:**
-* [ ] **PII Scrubber**: Automated masking of sensitive data in logs.
-* [ ] **Webhook Guard**: Unified signature verification for Stripe/GitHub.
-* [ ] **SQL Last-Stand**: Outbound query monitoring for injection patterns.
-
-[**Cast your vote on the Roadmap Discussions →**](https://github.com/KanxPHP/core/discussions/1)
+## 🛠️ Core Infrastructure
+*   **SafeCurl:** SSRF-protected external requests with private IP blacklisting.
+*   **SafeJSON:** Type-enforced JSON parsing with `IntegrityException` handling.
+*   **SafeString:** Multi-byte/Emoji-safe truncation and secure entropy generation.
+*   **Unified Router:** Single-entry point logic for multi-tool kits.
 
 ---
 
-## 💖 Support the Mission (Passive Income)
+## 🚀 Get Started
+Become a contributor or sponsor to gain access to the **Kanx-CLI** and start scaffolding your own API empire.
 
-Maintaining security tools requires constant updates to bridge new PHP versions and patch emerging vulnerabilities. By becoming a sponsor, you fund the development of the "Advanced Security Modules."
-
-### Sponsorship Tiers:
-* **🛡️ Defender ($10/mo):** Access to Sponsor-only polls and 5x voting weight on the roadmap.
-* **🚀 Startup ($49/mo):** Your logo on the README + early access to private security modules.
-* **🏛️ Enterprise ($199/mo):** Direct priority support and custom security wrapper requests.
-
-[**Become a Sponsor on GitHub**](https://github.com/sponsors/KanxPHP)
-
----
-
-## 📝 License
-
-The KanxPHP Core is open-sourced software licensed under the [MIT license](LICENSE).
+**Are you ready to launch?** Check out the `/examples/web-scan-kit` directory to see the full implementation of our latest production-ready suite.

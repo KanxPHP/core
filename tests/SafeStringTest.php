@@ -1,32 +1,36 @@
 <?php
+
 namespace KanxPHP\Core\Tests;
 
 use PHPUnit\Framework\TestCase;
 use KanxPHP\Core\SafeString;
 
-class SafeStringTest extends TestCase 
+class SafeStringTest extends TestCase
 {
-    public function testLimitTruncatesLongString() 
+    public function testLimitHandlesUtf8Safely()
     {
-        $input = "This is a very long string that should be cut off.";
-        $result = SafeString::limit($input, 10);
-        $this->assertEquals("This is...", $result);
-    }
-
-    public function testHashReturnsValidVerifyableString() 
-    {
-        $pass = "kanx-secret-123";
-        $hash = SafeString::hash($pass);
-        $this->assertIsString($hash);
-        $this->assertTrue(password_verify($pass, $hash));
-    }
-
-    public function testVerifyReturnsTrueOnMatch() 
-    {
-        $pass = "kanx-password";
-        $hash = SafeString::hash($pass);
+        $input = "Security is 🛡️ essential";
+        // 12 (text) + 2 (emoji) + 3 (suffix) = 17
+        $result = SafeString::limit($input, 17);
         
-        $this->assertTrue(SafeString::verify($pass, $hash));
-        $this->assertFalse(SafeString::verify("wrong-password", $hash));
+        $this->assertStringContainsString('🛡️', $result);
+        $this->assertStringEndsWith('...', $result);
+    }
+
+    public function testEqualsProtectsAgainstTimingAttacks()
+    {
+        $secret = "kanx_api_key_123";
+        
+        $this->assertTrue(SafeString::equals($secret, $secret));
+        $this->assertFalse(SafeString::equals($secret, "wrong_key"));
+    }
+
+    public function testRandomProducesSecureEntropy()
+    {
+        $token1 = SafeString::random(32);
+        $token2 = SafeString::random(32);
+
+        $this->assertEquals(32, strlen($token1));
+        $this->assertNotEquals($token1, $token2); // Probability of collision is near zero
     }
 }

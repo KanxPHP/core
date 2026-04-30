@@ -1,40 +1,43 @@
 <?php
+
 namespace KanxPHP\Core;
 
 use KanxPHP\Core\Exceptions\IntegrityException;
 
-class SafeString 
+class SafeString
 {
-    /** 
-     * Securely hashes passwords using Argon2id 
+    /**
+     * Multi-byte safe string truncation.
+     * Prevents cutting through UTF-8 characters which can corrupt data.
      */
-    public static function hash(string $password): string 
-    {
-        $hash = password_hash($password, PASSWORD_ARGON2ID);
-        if ($hash === false) {
-            throw new IntegrityException("Secure hash generation failed.");
-        }
-        return $hash;
-    }
-
-    /** 
-     * Verifies a password against a hash
-     * Gateway: Simple true/false return.
-     * Value-Add: Timing-attack safe by default via native password_verify.
-     */
-    public static function verify(string $password, string $hash): bool 
-    {
-        return password_verify($password, $hash);
-    }
-
-    /** 
-     * Multi-byte safe string truncation 
-     */
-    public static function limit(string $value, int $limit = 100): string 
+    public static function limit(string $value, int $limit = 100, string $end = '...'): string
     {
         if (mb_strwidth($value, 'UTF-8') <= $limit) {
             return $value;
         }
-        return mb_strimwidth($value, 0, $limit, '...', 'UTF-8');
+
+        return mb_strimwidth($value, 0, $limit, $end, 'UTF-8');
+    }
+
+    /**
+     * Timing-attack safe string comparison.
+     * Use this for comparing API keys, tokens, or hashes.
+     */
+    public static function equals(string $known, string $user): bool
+    {
+        return hash_equals($known, $user);
+    }
+
+    /**
+     * Generates a cryptographically secure random string.
+     * Essential for CSRF tokens, salts, or temporary secrets.
+     */
+    public static function random(int $length = 32): string
+    {
+        try {
+            return bin2hex(random_bytes($length / 2));
+        } catch (\Exception $e) {
+            throw new IntegrityException("CSPRNG source failed: " . $e->getMessage());
+        }
     }
 }

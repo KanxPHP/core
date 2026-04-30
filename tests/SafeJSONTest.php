@@ -29,4 +29,14 @@ class SafeJSONTest extends TestCase
         // Valid JSON but returns a string, not an array
         SafeJSON::parse('"Just a string"');
     }
+
+    public function testParseThrowsExceptionOnNonArray()
+    {
+        $this->expectException(IntegrityException::class);
+        $this->expectExceptionMessage("JSON parsed successfully but did not return an array structure.");
+
+        // Valid JSON, but it's a string, not an array/object
+        SafeJSON::parse('"Just a string"');
+    }
+
 }
