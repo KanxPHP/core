@@ -112,6 +112,9 @@ function buildKit($kitName) {
         "require" => [
             "php" => ">=8.1",
             "kanxphp/core" => "dev-main" // This links back to your shared core
+        ],
+        "scripts" => [
+            "kanx" => "php vendor/kanxphp/core/kanx-cli"
         ]
     ];
 
