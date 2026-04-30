@@ -2,6 +2,8 @@
 
 namespace KanxPHP\Core;
 
+use KanxPHP\Core\Config;
+
 class SafeCurl 
 {
     /**
@@ -24,6 +26,10 @@ class SafeCurl
         
         if ($headersOnly) {
             curl_setopt($ch, CURLOPT_NOBODY, true);
+        }
+
+        if (Config::isWindows()) {
+            curl_setopt($ch, CURLOPT_SSL_OPTIONS, CURLSSLOPT_NATIVE_CA);
         }
 
         $response = curl_exec($ch);
