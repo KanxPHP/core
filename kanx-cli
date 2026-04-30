@@ -1,7 +1,25 @@
 #!/usr/bin/env php
 <?php
 
-require_once __DIR__ . '/vendor/autoload.php';
+// Smart Autoload Finder: Searches for vendor/autoload.php in local or parent directories
+$autoloadPaths = [
+    __DIR__ . '/vendor/autoload.php',           // Local dev
+    __DIR__ . '/../../autoload.php',            // Inside vendor/bin (standard)
+    __DIR__ . '/../../../vendor/autoload.php',  // Deeper nested
+];
+
+$found = false;
+foreach ($autoloadPaths as $path) {
+    if (file_exists($path)) {
+        require_once $path;
+        $found = true;
+        break;
+    }
+}
+
+if (!$found) {
+    die("❌ Error: Could not find vendor/autoload.php. Please run 'composer install'.\n");
+}
 
 use KanxPHP\Core\SafeJSON;
 
@@ -102,7 +120,7 @@ function buildKit($kitName) {
         json_encode($composerData, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)
     );
 
-    $file = "./kanx-cli";
+    $file = __DIR__ . "/./kanx-cli";
     $newfile = "{$kitName}/kanx";
 
     if (!copy($file, $newfile)) {
