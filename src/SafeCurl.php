@@ -2,12 +2,14 @@
 
 namespace KanxPHP\Core;
 
-class SafeCurl {
+class SafeCurl 
+{
     /**
      * Executes a secure GET request to fetch headers or content.
      * Prevents access to internal/private IP ranges.
      */
-    public static function fetch(string $url, bool $headersOnly = true) {
+    public static function fetch(string $url, bool $headersOnly = true) 
+    {
         if (!self::isSafeUrl($url)) {
             return false;
         }
@@ -38,7 +40,8 @@ class SafeCurl {
     /**
      * Validates that the URL is public and not a private/local IP.
      */
-    private static function isSafeUrl(string $url): bool {
+    private static function isSafeUrl(string $url): bool 
+    {
         $parts = parse_url($url);
         if (!$parts || !isset($parts['host'])) return false;
 
@@ -70,7 +73,8 @@ class SafeCurl {
         return ($ip & $mask) == ($subnet & $mask);
     }
 
-    private static function parseHeaders(string $headerContent): array {
+    private static function parseHeaders(string $headerContent): array 
+    {
         $headers = [];
         foreach (explode("\r\n", $headerContent) as $line) {
             if (strpos($line, ':') !== false) {
@@ -80,4 +84,15 @@ class SafeCurl {
         }
         return $headers;
     }
+
+    /**
+     * Helper to fetch only the HTTP headers of a URL.
+     * Perfect for Auditor or Link-Checker tools.
+     */
+    public static function getHeaders(string $url): array|bool
+    {
+        // Pass 'true' to our main fetch method to enable CURLOPT_NOBODY
+        return self::fetch($url, true);
+    }
+
 }
