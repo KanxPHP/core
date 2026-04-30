@@ -57,7 +57,7 @@ switch ($command) {
 }
 
 function createController($name) {
-    $dir = __DIR__ . "/src/Controllers";
+    $dir = getcwd() . "/src/Controllers";
     if (!is_dir($dir)) mkdir($dir, 0755, true);
 
     $path = "{$dir}/{$name}Controller.php";
