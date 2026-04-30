@@ -27,6 +27,9 @@
             "KanxPHP\\Core\\Tests\\": "tests/"
         }
     },
+    "bin": [
+        "kanx-cli"
+    ],
     "funding": [
         {
         "type": "github",
