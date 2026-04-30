@@ -51,4 +51,50 @@ class SafeJSON
             );
         }
     }
+
+    /**
+     * Returns success
+     * 
+     * @param array $data
+     * @param int $code
+     * @return string
+     */
+    public static function success(array $data, int $code = 200): string 
+    {
+        http_response_code($code);
+        header('Content-Type: application/json; charset=utf-8');
+        
+        return self::encode([
+            'status' => 'success',
+            'data' => $data,
+            'meta' => [
+                'execution_time' => round(microtime(true) - $_SERVER["REQUEST_TIME_FLOAT"], 4) . 's',
+                'timestamp' => time()
+            ]
+        ]);
+    }
+
+    /**
+     * Returns error
+     * 
+     * @param string $message
+     * @param array $details
+     * @param int $code
+     * @return string
+     */
+    public static function error(string $message, array $details = [], int $code = 400): string 
+    {
+        http_response_code($code);
+        header('Content-Type: application/json; charset=utf-8');
+
+        return self::encode([
+            'status' => 'error',
+            'message' => $message,
+            'details' => $details,
+            'meta' => [
+                'timestamp' => time()
+            ]
+        ]);
+    }
+    
 }
