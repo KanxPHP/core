@@ -1,4 +1,3 @@
-
 <?php
 
 namespace KanxPHP\Core;
@@ -14,12 +13,16 @@ class SafeXss
      */
     public static function clean(string $data): string
     {
-        // Remove null bytes which can bypass some filters
+        // Remove null bytes
         $data = str_replace(chr(0), '', $data);
         
-        // Strip tags and encode special chars
-        return htmlspecialchars(strip_tags($data), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        // RAD Fix: Remove the contents of script and style tags entirely
+        $data = preg_replace('/<(script|style)\b[^>]*>([\s\S]*?)<\/\1>/i', '', $data);
+        
+        // Strip remaining tags and encode
+        return htmlspecialchars(trim(strip_tags($data)), ENT_QUOTES | ENT_HTML5, 'UTF-8');
     }
+
 
     /**
      * Attribute Shield: Specifically cleans data meant for HTML attributes.

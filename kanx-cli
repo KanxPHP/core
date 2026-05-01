@@ -47,7 +47,9 @@ switch ($command) {
         buildKit($name);
         break;
     case 'cache:clear':
-        clearCache();
+        // Check if --prune flag is present
+        $pruneOnly = in_array('--prune', $argv);
+        clearCache($pruneOnly);
         break;
     case 'help':
     default:
@@ -58,28 +60,34 @@ switch ($command) {
         break;
 }
 
-function clearCache() {
-    // Standard KanxPHP cache path
-    $cacheDir = getcwd() . '/storage/cache';
-
-    if (!is_dir($cacheDir)) {
-        echo "ℹ️ Cache directory does not exist. Nothing to clear.\n";
-        return;
-    }
+function clearCache($pruneOnly = false) {
+    $cacheDir = __DIR__ . '/storage/cache';
+    if (!is_dir($cacheDir)) return;
 
     $files = glob($cacheDir . '/*.php');
-    $count = 0;
+    $deleted = 0;
+    $kept = 0;
 
     foreach ($files as $file) {
-        if (is_file($file)) {
+        if ($pruneOnly) {
+            // Smart Pruning: Only delete if expired
+            @include $file; // Injects $expire
+            if (isset($expire) && $expire < time()) {
+                unlink($file);
+                $deleted++;
+            } else {
+                $kept++;
+            }
+        } else {
+            // Hard Clear: Delete everything
             unlink($file);
-            $count++;
+            $deleted++;
         }
     }
 
-    echo "✅ Success: Cleared {$count} cached files from storage.\n";
+    $mode = $pruneOnly ? "Pruned (Expired Only)" : "Hard Cleared (All)";
+    echo "✅ Cache {$mode}: {$deleted} files removed. {$kept} files remaining.\n";
 }
-
 
 function createController($name) {
     $dir = getcwd() . "/src/Controllers";
