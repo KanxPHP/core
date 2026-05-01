@@ -46,7 +46,9 @@ switch ($command) {
         }
         buildKit($name);
         break;
-
+    case 'cache:clear':
+        clearCache();
+        break;
     case 'help':
     default:
         echo "KanxPHP CLI v1.0.0\n";
@@ -55,6 +57,29 @@ switch ($command) {
         echo "  build:kit {niche}       - Scaffold a new niche API bundle\n";
         break;
 }
+
+function clearCache() {
+    // Standard KanxPHP cache path
+    $cacheDir = getcwd() . '/storage/cache';
+
+    if (!is_dir($cacheDir)) {
+        echo "ℹ️ Cache directory does not exist. Nothing to clear.\n";
+        return;
+    }
+
+    $files = glob($cacheDir . '/*.php');
+    $count = 0;
+
+    foreach ($files as $file) {
+        if (is_file($file)) {
+            unlink($file);
+            $count++;
+        }
+    }
+
+    echo "✅ Success: Cleared {$count} cached files from storage.\n";
+}
+
 
 function createController($name) {
     $dir = getcwd() . "/src/Controllers";
