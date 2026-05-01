@@ -68,8 +68,10 @@ class SafeJSON
             'status' => 'success',
             'data' => $data,
             'meta' => [
+                'method'         => $_SERVER['REQUEST_METHOD'] ?? 'UNKNOWN', // The new indicator
                 'execution_time' => round(microtime(true) - $_SERVER["REQUEST_TIME_FLOAT"], 4) . 's',
-                'timestamp' => time()
+                'timestamp'      => time(),
+                'request_id'     => uniqid('knx_', true) // Added for easier log tracking
             ]
         ]);
     }
