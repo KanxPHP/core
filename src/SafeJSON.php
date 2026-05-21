@@ -61,8 +61,8 @@ class SafeJSON
      */
     public static function success(array $data, int $code = 200): string 
     {
-        http_response_code($code);
         if (!headers_sent()) {
+            http_response_code($code);
             header('Content-Type: application/json; charset=utf-8');
         }
         
@@ -88,8 +88,8 @@ class SafeJSON
      */
     public static function error(string $message, array $details = [], int $code = 400): string 
     {
-        http_response_code($code);
         if (!headers_sent()) {
+            http_response_code($code);        
             header('Content-Type: application/json; charset=utf-8');
         }
 
