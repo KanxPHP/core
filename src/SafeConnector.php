@@ -64,7 +64,7 @@ class SafeConnector
             $nativeKeyPath = $nativeTargetRule;
 
             // Detect type parameters formatting constraints (e.g. "regular_price:string")
-            if (str_pos($nativeTargetRule, ':') !== false) {
+            if (strpos($nativeTargetRule, ':') !== false) {
                 list($nativeKeyPath, $typeCast) = explode(':', $nativeTargetRule, 2);
             }
 
@@ -93,7 +93,7 @@ class SafeConnector
      */
     private static function resolveDotPath(array $data, string $path)
     {
-        if (str_pos($path, '.') === false) {
+        if (strpos($path, '.') === false) {
             return $data[$path] ?? null;
         }
 
