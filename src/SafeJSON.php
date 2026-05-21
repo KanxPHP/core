@@ -62,7 +62,9 @@ class SafeJSON
     public static function success(array $data, int $code = 200): string 
     {
         http_response_code($code);
-        @header('Content-Type: application/json; charset=utf-8');
+        if (!headers_sent()) {
+            header('Content-Type: application/json; charset=utf-8');
+        }
         
         return self::encode([
             'status' => 'success',
@@ -87,7 +89,9 @@ class SafeJSON
     public static function error(string $message, array $details = [], int $code = 400): string 
     {
         http_response_code($code);
-        header('Content-Type: application/json; charset=utf-8');
+        if (!headers_sent()) {
+            header('Content-Type: application/json; charset=utf-8');
+        }
 
         return self::encode([
             'status' => 'error',
