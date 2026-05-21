@@ -39,6 +39,17 @@ switch ($command) {
         createController($name);
         break;
 
+    case 'make:connector':
+        // Usage pattern: php kanx-cli make:connector woocommerce shopify
+        $source = $argv[2] ?? null;
+        $destination = $argv[3] ?? null;
+        if (!$source || !$destination) {
+            echo "Usage: php kanx-cli make:connector {source} {destination}\n";
+            exit(1);
+        }
+        createConnector($source, $destination);
+        break;
+
     case 'build:kit':
         if (!$name) {
             echo "Usage: php kanx-cli build:kit {niche}\n";
@@ -46,17 +57,20 @@ switch ($command) {
         }
         buildKit($name);
         break;
+
     case 'cache:clear':
-        // Check if --prune flag is present
         $pruneOnly = in_array('--prune', $argv);
         clearCache($pruneOnly);
         break;
+
     case 'help':
     default:
-        echo "KanxPHP CLI v1.0.0\n";
+        echo "KanxPHP CLI v1.1.0\n";
         echo "Available commands:\n";
-        echo "  make:controller {Name}  - Generate a new API controller\n";
-        echo "  build:kit {niche}       - Scaffold a new niche API bundle\n";
+        echo "  make:controller {Name}             - Generate a new API controller\n";
+        echo "  make:connector {src} {dest}        - Generate DTaaS pipeline connector & schemas\n";
+        echo "  build:kit {niche}                  - Scaffold a new niche API bundle\n";
+        echo "  cache:clear [--prune]              - Flush internal system cache storage\n";
         break;
 }
 
@@ -70,7 +84,6 @@ function clearCache($pruneOnly = false) {
 
     foreach ($files as $file) {
         if ($pruneOnly) {
-            // Smart Pruning: Only delete if expired
             @include $file; // Injects $expire
             if (isset($expire) && $expire < time()) {
                 unlink($file);
@@ -79,7 +92,6 @@ function clearCache($pruneOnly = false) {
                 $kept++;
             }
         } else {
-            // Hard Clear: Delete everything
             unlink($file);
             $deleted++;
         }
@@ -105,17 +117,74 @@ function createController($name) {
     echo "✅ Successfully created: src/Controllers/{$name}Controller.php\n";
 }
 
+/**
+ * NEW: Generates Version-Controlled Stateless Connector Pipelines & JSON Schemas
+ */
+function createConnector($source, $destination) {
+    $source = strtolower($source);
+    $destination = strtolower($destination);
+    
+    $prefixSrc = ucfirst($source);
+    $prefixDest = ucfirst($destination);
+    $className = "{$prefixSrc}To{$prefixDest}Controller";
+    
+    $controllerDir = getcwd() . "/src/Controllers";
+    $configBaseDir = getcwd() . "/config/connectors";
+
+    // 1. Generate structural data config directory snapshots paths [INDEX]
+    $srcConfigDir  = "{$configBaseDir}/{$source}/v1";
+    $destConfigDir = "{$configBaseDir}/{$destination}/v1";
+
+    if (!is_dir($controllerDir)) mkdir($controllerDir, 0755, true);
+    if (!is_dir($srcConfigDir)) mkdir($srcConfigDir, 0755, true);
+    if (!is_dir($destConfigDir)) mkdir($destConfigDir, 0755, true);
+
+    $controllerPath = "{$controllerDir}/{$className}.php";
+
+    if (file_exists($controllerPath)) {
+        echo "❌ Error: Connector translation route pipeline already exists.\n";
+        return;
+    }
+
+    // 2. Draft the universal, parameter-driven pass-through controller template [INDEX]
+    $controllerTemplate = "<?php\n\nnamespace KanxPHP\Controllers;\n\nuse KanxPHP\Core\SafeConnector;\nuse KanxPHP\Core\SafeJSON;\n\nclass {$className} {\n\n    /**\n     * Executes high-speed A-to-B data transformation streams via memory registers\n     */\n    public function transformStream(string \$rawInboundPayload, string \$resourceType = 'products'): array {\n        \$configRoot = getcwd() . '/config/connectors';\n        \n        // Resolve documentation schema files rules on the fly\n        \$srcRulesPath  = \"{\$configRoot}/{$source}/v1/transformer_{\$resourceType}.json\";\n        \$destRulesPath = \"{\$configRoot}/{$destination}/v1/push_transformer_{\$resourceType}.json\";\n\n        if (!file_exists(\$srcRulesPath) || !file_exists(\$destRulesPath)) {\n            return ['success' => false, 'error' => 'Configuration schema translation files maps missing.'];\n        }\n\n        \$srcRules  = json_decode(file_get_contents(\$srcRulesPath), true);\n        \$destRules = json_decode(file_get_contents(\$destRulesPath), true);\n\n        // Pass 1: Native Data (A) ➔ Universal Standardised Format [INDEX]\n        \$ipaasStandardArray = SafeConnector::extract(\$rawInboundPayload, \$srcRules);\n\n        // Pass 2: Universal Standardised Format ➔ Target Destination Data (B) [INDEX]\n        \$finalNativePayload = SafeConnector::inject(\$ipaasStandardArray, \$destRules);\n\n        return [\n            'success' => true,\n            'source_platform' => '{$source}',\n            'destination_platform' => '{$destination}',\n            'resource_type' => \$resourceType,\n            'transformed_payload' => \$finalNativePayload\n        ];\n    }\n}\n";
+
+    file_put_contents($controllerPath, $controllerTemplate);
+
+    // 3. Auto-generate declarative Source Input extractor dummy profile dictionary [INDEX]
+    $srcDummyTemplate = [
+        "standard_id:string"   => "id",
+        "standard_title:string" => "name",
+        "standard_sku:string"   => "sku",
+        "standard_price:float"  => "regular_price",
+        "standard_stock:int"    => "stock_quantity"
+    ];
+    file_put_contents("{$srcConfigDir}/transformer_products.json", json_encode($srcDummyTemplate, JSON_PRETTY_PRINT));
+
+    // 4. Auto-generate declarative Destination Output injector dummy profile dictionary [INDEX]
+    $destDummyTemplate = [
+        "product.title:string" => "standard_title",
+        "product.variants.0.sku:string" => "standard_sku",
+        "product.variants.0.price:string" => "standard_price",
+        "product.variants.0.inventory_quantity:int" => "standard_stock"
+    ];
+    file_put_contents("{$destConfigDir}/push_transformer_products.json", json_encode($destDummyTemplate, JSON_PRETTY_PRINT));
+
+    echo "✅ Successfully created DTaaS pipeline connector system:\n";
+    echo "  - Controller: src/Controllers/{$className}.php\n";
+    echo "  - Source Map:  config/connectors/{$source}/v1/transformer_products.json\n";
+    echo "  - Target Map:  config/connectors/{$destination}/v1/push_transformer_products.json\n";
+}
+
 function buildKit($kitName) {
     echo "🚀 Building Kit: {$kitName}...\n";
 
-    // 1. Create the Directory
     if (is_dir($kitName)) {
         echo "❌ Error: Directory '{$kitName}' already exists.\n";
         return;
     }
     mkdir($kitName, 0755);
 
-    // 2. Scaffold Folder Structure
     $folders = [
         "{$kitName}/src/Controllers",
         "{$kitName}/src/Core",
@@ -128,11 +197,9 @@ function buildKit($kitName) {
         echo "  - Created {$folder}\n";
     }
 
-    // 3. Create a clean index.php entry point
     $indexTemplate = "<?php\n\nrequire_once __DIR__ . '/../vendor/autoload.php';\n\n// Basic RAD Router\necho 'Welcome to {$kitName} API';\n";
     file_put_contents("{$kitName}/public/index.php", $indexTemplate);
 
-    // 4. Create the Kit's composer.json
     $composerData = [
         "name" => "kanxphp/{$kitName}",
         "description" => "A high-performance micro-app kit built with KanxPHP",
@@ -144,7 +211,7 @@ function buildKit($kitName) {
         ],
         "require" => [
             "php" => ">=8.1",
-            "kanxphp/core" => "dev-main" // This links back to your shared core
+            "kanxphp/core" => "dev-main"
         ],
         "scripts" => [
             "kanx" => "php vendor/kanxphp/core/kanx-cli"
@@ -164,7 +231,6 @@ function buildKit($kitName) {
     }
 
     shell_exec("cd {$kitName} && git init");
-
     shell_exec("cd {$kitName} && composer install");
 
     echo "✅ Kit '{$kitName}' is built. \n👉 Next steps: \n   cd {$kitName}\n";
