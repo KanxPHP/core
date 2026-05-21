@@ -27,7 +27,7 @@ class SafeConnector
             $ipaasStandardKey = $ipaasTargetRule;
 
             // Detect embedded format definitions modifiers (e.g. "standard_price:float")
-            if (str_pos($ipaasTargetRule, ':') !== false) {
+            if (strpos($ipaasTargetRule, ':') !== false) {
                 list($ipaasStandardKey, $typeCast) = explode(':', $ipaasTargetRule, 2);
             }
 
